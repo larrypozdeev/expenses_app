@@ -10,7 +10,7 @@ from wtforms.validators import DataRequired, Email, Length, Regexp, EqualTo
 from ..models import User
 
 
-class RegisterForm(FlaskForm):
+class RegistrationForm(FlaskForm):
     email = StringField(
         "Email", validators=[DataRequired(), Email(), Length(min=1, max=64)]
     )
