@@ -3,6 +3,7 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app
 from flask_login import UserMixin
 from . import db, login_manager
+from datetime import datetime
 
 
 class User(UserMixin, db.Model):
@@ -12,6 +13,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), unique=True, index=True)
     password_hash = db.Column(db.String(128))
     confirmed = db.Column(db.Boolean, default=True)
+    expense_categories = db.relationship("ExpenseCategories", backref="user")
 
     @property
     def password(self):
@@ -62,6 +64,53 @@ class User(UserMixin, db.Model):
         return "<User %r>" % self.username
 
 
+class Balances(User):
+    balance = db.Column(db.Float)
+    db.relationship("Expenses", backref="balance")
+    db.relationship("Incomes", backref="balance")
+
+
+class ExpenseCategories(db.Model):
+    __tablename__ = "expense_categories"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True, index=True)
+    description = db.Column(db.String(200), index=True)
+    expenses = db.relationship("Expenses", backref="expense_category")
+
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+
+
+class Expenses(db.Model):
+    __tablename__ = "expenses"
+    id = db.Column(db.Integer, primary_key=True)
+    category_id = db.Column(db.Integer, db.ForeignKey("expense_categories.id"))
+    name = db.Column(db.String(50), unique=True, index=True)
+    description = db.Column(db.String(200), index=True)
+    date = db.Column(db.DateTime, default=datetime.now)
+    amount = db.Column(db.Float)
+
+
+class IncomeCategories(db.Model):
+    __tablename__ = "income_categories"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True, index=True)
+    description = db.Column(db.String(200), index=True)
+    expenses = db.relationship("Incomes", backref="income_category")
+
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+
+
+class Incomes(db.Model):
+    __tablename__ = "incomes"
+    id = db.Column(db.Integer, primary_key=True)
+    category_id = db.Column(db.Integer, db.ForeignKey("income_categories.id"))
+    name = db.Column(db.String(50), unique=True, index=True)
+    description = db.Column(db.String(200), index=True)
+    amount = db.Column(db.Float)
+
+
 @login_manager.user_loader
 def load_user(user_id):
-    return User.get(user_id)
+    return User.query.get(user_id)
