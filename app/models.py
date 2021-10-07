@@ -96,7 +96,6 @@ class Expenses(db.Model):
     description = db.Column(db.String(200), index=True)
     date = db.Column(db.DateTime, default=datetime.now)
     amount = db.Column(db.Float)
-    # balance = db.Column(db.Integer, db.ForeignKey("balances"))
 
     def __repr__(self):
         return f"<Expense {self.name} - {self.amount}>"
@@ -108,7 +107,7 @@ class IncomeCategories(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True, index=True)
     description = db.Column(db.String(200), index=True)
-    expenses = db.relationship("Incomes", backref="income_category")
+    incomes = db.relationship("Incomes", backref="income_category")
 
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
 
