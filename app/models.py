@@ -70,6 +70,7 @@ class Balances(User):
     db.relationship("Expenses", backref="balance")
     db.relationship("Incomes", backref="balance")
 
+
     def __repr__(self):
         return f"<Balance of {self.username} - {self.balance}>"
 
@@ -92,9 +93,9 @@ class Expenses(db.Model):
     __tablename__ = "expenses"
     id = db.Column(db.Integer, primary_key=True)
     category_id = db.Column(db.Integer, db.ForeignKey("expense_categories.id"))
-    name = db.Column(db.String(50), unique=True, index=True)
+    name = db.Column(db.String(50), unique=False, index=True)
     description = db.Column(db.String(200), index=True)
-    date = db.Column(db.DateTime, default=datetime.now)
+    date = db.Column(db.DateTime, default=datetime.utcnow)
     amount = db.Column(db.Float)
 
     def __repr__(self):
@@ -119,7 +120,7 @@ class Incomes(db.Model):
     __tablename__ = "incomes"
     id = db.Column(db.Integer, primary_key=True)
     category_id = db.Column(db.Integer, db.ForeignKey("income_categories.id"))
-    name = db.Column(db.String(50), unique=True, index=True)
+    name = db.Column(db.String(50), index=True)
     description = db.Column(db.String(200), index=True)
     amount = db.Column(db.Float)
 
