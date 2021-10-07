@@ -22,6 +22,7 @@ def create_app(config_name):
     login_manager.init_app(app)
     moment.init_app(app)
 
+    from .main import main as main_blueprint
     from .auth import auth as auth_blueprint
     from .budget import budget as budget_blueprint
 
