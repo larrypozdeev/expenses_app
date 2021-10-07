@@ -65,9 +65,13 @@ class User(UserMixin, db.Model):
 
 
 class Balances(User):
-    balance = db.Column(db.Float)
+    __tablename__ = "balances"
+    balance = db.Column(db.Float, default=0.00)
     db.relationship("Expenses", backref="balance")
     db.relationship("Incomes", backref="balance")
+
+    def __repr__(self):
+        return f"<Balance of {self.username} - {self.balance}>"
 
 
 class ExpenseCategories(db.Model):
@@ -80,6 +84,9 @@ class ExpenseCategories(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
 
+    def __repr__(self):
+        return f"<ExpenseCategory {self.name}>"
+
 
 class Expenses(db.Model):
     __tablename__ = "expenses"
@@ -89,6 +96,10 @@ class Expenses(db.Model):
     description = db.Column(db.String(200), index=True)
     date = db.Column(db.DateTime, default=datetime.now)
     amount = db.Column(db.Float)
+    # balance = db.Column(db.Integer, db.ForeignKey("balances"))
+
+    def __repr__(self):
+        return f"<Expense {self.name} - {self.amount}>"
 
 
 class IncomeCategories(db.Model):
@@ -101,6 +112,9 @@ class IncomeCategories(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
 
+    def __repr__(self):
+        return f"<IncomeCategory {self.name}>"
+
 
 class Incomes(db.Model):
     __tablename__ = "incomes"
@@ -109,6 +123,9 @@ class Incomes(db.Model):
     name = db.Column(db.String(50), unique=True, index=True)
     description = db.Column(db.String(200), index=True)
     amount = db.Column(db.Float)
+
+    def __repr__(self):
+        return f"<Income {self.name} - {self.amount}>"
 
 
 @login_manager.user_loader
