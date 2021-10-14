@@ -26,6 +26,7 @@ def create_app(config_name):
     from .auth import auth as auth_blueprint
     from .budget import budget as budget_blueprint
 
+    app.register_blueprint(main_blueprint)
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(budget_blueprint)
     return app
